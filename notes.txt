@@ -1,0 +1,24 @@
+downloads
+
+express
+express-session
+dotenv
+jsonwebtoken
+mongoose
+multer
+connect-mongo
+bcrypt
+express-validator ??
+nodemailer ??
+path
+
+as it currently stands, I have the users create path set up
+    need to add login functionality
+        need to set up userInSession
+    will need to add friends
+    will need to add users to groups with reverse lookup
+
+
+need to set up nodemailer.. maybe 2FA?
+
+need to look into storing photos in s3 bucket
