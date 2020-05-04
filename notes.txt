@@ -1,15 +1,24 @@
-downloads
+for node
+    express
+    express-session
+    dotenv
+    jsonwebtoken
+    mongoose
+    multer
+    connect-mongo
+    bcrypt
+    nodemailer ??
+    path
 
-express
-express-session
-dotenv
-jsonwebtoken
-mongoose
-multer
-connect-mongo
-bcrypt
-nodemailer ??
-path
+for react
+    axios
+    learn sass?
+    redux
+    redux-thunk?
+
+
+
+
 
 as it currently stands, I have the users create path set up
     will need to add friends

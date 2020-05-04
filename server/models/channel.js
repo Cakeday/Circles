@@ -22,3 +22,5 @@ const ChannelSchema = mongoose.Schema({
         ref: 'Group'
     }
 })
+
+mongoose.model('Channel', ChannelSchema)
