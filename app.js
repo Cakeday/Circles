@@ -1,5 +1,7 @@
 const express = require('express')
-const app = express()
+const app = express();
+const mongoose = require('mongoose')
+
 
 const path = require('path')
 
@@ -14,14 +16,6 @@ const dotenv = require('dotenv').config()
 app.listen(process.env.PORT, () => console.log("listening on port 8000"));
 
 
-// SESSION SETTINGS (Keep them in server.js)
-// const session = require('express-session');
-// app.use(session({
-//     secret: 'keyboardkitteh',
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: { maxAge: 60000 }
-//   }))
 
 
 // FLASH SETTINGS (Keep them here too)
@@ -32,6 +26,23 @@ app.listen(process.env.PORT, () => console.log("listening on port 8000"));
 // VIEWS AND STATIC SETTINGS
 app.use(express.static(__dirname + "/public/dist/public"));
 
+
+// SESSION SETTINGS (Keep them in server.js)
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 60000 },
+    store: new MongoStore({ mongooseConnection: mongoose.connection })
+  }))
+
+
 // ROUTES
-require('./server/config/mongoose.js');
+const mongooseConfig = require('./server/config/mongoose.js');
 require('./server/config/routes.js')(app);
+
+

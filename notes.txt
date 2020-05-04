@@ -8,16 +8,17 @@ mongoose
 multer
 connect-mongo
 bcrypt
-express-validator ??
 nodemailer ??
 path
 
 as it currently stands, I have the users create path set up
     need to add login functionality
         need to set up userInSession
+            almost done with this?? Now I need to test sessions in db and see if they exist
     will need to add friends
     will need to add users to groups with reverse lookup
 
+add friends
 
 need to set up nodemailer.. maybe 2FA?
 
