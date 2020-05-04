@@ -15,7 +15,12 @@ const PostSchema = mongoose.Schema({
     likes: [{
         type: Schema.Types.ObjectId,
         default: 0,
-    }]
+    }],
+
+    channel: {
+        type: Schema.Types.ObjectId,
+        ref: 'Channel'
+    }
 
 
 }, {timestamps: true})

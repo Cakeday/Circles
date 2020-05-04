@@ -12,13 +12,12 @@ nodemailer ??
 path
 
 as it currently stands, I have the users create path set up
-    need to add login functionality
-        need to set up userInSession
-            almost done with this?? Now I need to test sessions in db and see if they exist
     will need to add friends
+        add a find friends function
+    will need to add and see all people in a group
+    need to add notification server connection with websockets
     will need to add users to groups with reverse lookup
 
-add friends
 
 need to set up nodemailer.. maybe 2FA?
 

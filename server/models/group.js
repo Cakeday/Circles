@@ -7,6 +7,11 @@ const GroupSchema = mongoose.Schema({
         required: true
     },
 
+    creator: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
+
     description: {
         type: String,
         required: true,
@@ -22,17 +27,9 @@ const GroupSchema = mongoose.Schema({
         ref: "User"
     }],
     
-    
     channels: [{
-        title: {
-            type: String,
-            required: true
-        },
-
-        posts: [{
-            type: Schema.Types.ObjectId,
-            ref: "Post"
-        }],
+        type: Schema.Types.ObjectId,
+        ref: 'Channel'
     }]
 
 

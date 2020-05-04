@@ -62,9 +62,14 @@ module.exports = {
             next(error)
         }
     },
-    logout: async (req, res, next) => {
-        if (req.session.id) req.session.destroy();
-        res.json({message: 'success'})
-    }
+    logout: async (req, res) => {
+        if (req.session.id) { 
+            req.session.destroy();
+            res.json({message: 'success'})
+        }
+        res.json({message: 'user wasn\'t in session'})
+    },
+
+
 
 }
