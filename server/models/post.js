@@ -14,7 +14,7 @@ const PostSchema = mongoose.Schema({
 
     likes: [{
         type: Schema.Types.ObjectId,
-        default: 0,
+        ref: 'User'
     }],
 
     channel: {

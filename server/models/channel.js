@@ -7,6 +7,10 @@ const ChannelSchema = mongoose.Schema({
         required: true
     },
 
+    description: {
+        type: String,
+    },
+
     posts: [{
         type: Schema.Types.ObjectId,
         ref: 'Post'

@@ -14,6 +14,7 @@ module.exports = (app) => {
     app.post('/api/user/login', userController.login)
     app.get('/api/user/logout', userController.logout)
 
+    app.post('/api/user/requestFriend', userController.requestFriend)
 
     
     app.all("*", (req,res,next) => {

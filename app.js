@@ -13,7 +13,9 @@ const dotenv = require('dotenv').config()
 
 
 // PORT SETTINGS
-app.listen(process.env.PORT, () => console.log("listening on port 8000"));
+const server = app.listen(process.env.PORT, (server) => {
+  console.log("listening on port 8000")
+});
 
 
 
@@ -45,4 +47,5 @@ app.use(session({
 const mongooseConfig = require('./server/config/mongoose.js');
 require('./server/config/routes.js')(app);
 
-
+const ws = require('./server/websocket/socket').init(server)
+ws.on('connection', socket => {console.log('Socket connection established')})

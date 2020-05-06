@@ -70,6 +70,13 @@ module.exports = {
         res.json({message: 'user wasn\'t in session'})
     },
 
+    requestFriend: async (req, res, next) => {
+        if (!req.session.userId) return next(new Error('you need to log in first'))
+        const currentUser = await User.findOne({_id: req.session.userId})
+        const userToRequest = await User.findOne({_id: req.body.friendId})
+        if (!currentUser || !userToRequest) return next(new Error('User doesnt exist'))
+    }
+
 
 
 }
