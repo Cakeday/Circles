@@ -25,6 +25,7 @@ as it currently stands, I have the users create path set up
         add a find friends function
     will need to add and see all people in a group
     need to add notification server connection with websockets
+        need to set up id's for websocket connections
     will need to add users to groups with reverse lookup
 
 

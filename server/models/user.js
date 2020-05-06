@@ -50,9 +50,19 @@ const UserSchema = mongoose.Schema({
         unReadMessages: Number
     }],
 
-    notifications: [{
-        type: String,
-        enum: ['directMessage', 'friendRequest', 'newPost']
+    friendRequests: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+
+    notifications: [{ 
+        kind: {
+            type: String,
+            enum: ['friendRequest', 'newChannelPost', 'newDirectMessage', 'messageLiked'],
+        },
+        category: {
+            type: Schema.Types.ObjectId,
+        },
     }]
 
 }, {timestamps: true})

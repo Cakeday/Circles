@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const User = mongoose.model('User')
 const bcrypt = require('bcrypt')
 const session = require('express-session')
+const socket = require('../websocket/socket')
 
 
 module.exports = {
@@ -71,10 +72,39 @@ module.exports = {
     },
 
     requestFriend: async (req, res, next) => {
+
+        // check if user in session && if both users exist
         if (!req.session.userId) return next(new Error('you need to log in first'))
-        const currentUser = await User.findOne({_id: req.session.userId})
+        const currentUser = await User.findOne({_id: req.body.userId})
         const userToRequest = await User.findOne({_id: req.body.friendId})
         if (!currentUser || !userToRequest) return next(new Error('User doesnt exist'))
+
+
+        // check for pending requests on both sides && if already friends
+        if (currentUser.friendRequests.find(user => user._id == userToRequest._id)) {
+            return next(new Error('You already have a pending request from this user.'))
+        }
+        if (userToRequest.friendRequests.find(user => user._id == userToRequest)) {
+            return next(new Error('You already sent a request to this person.'))
+        }
+        if (currentUser.friends.find(user => user._id == userToRequest._id)) {
+            return next(new Error('You\'re already friends with this person'))
+        }
+
+        const notification = {
+            kind: 'friendRequest',
+            category: currentUser._id
+        }
+
+        userToRequest.friendRequests.push(currentUser._id)
+        userToRequest.notifications.push(notification)
+        await userToRequest.save()
+
+        // need to figure this out...
+        // socket.getWS().send()
+
+        
+
     }
 
 

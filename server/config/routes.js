@@ -15,6 +15,17 @@ module.exports = (app) => {
     app.get('/api/user/logout', userController.logout)
 
     app.post('/api/user/requestFriend', userController.requestFriend)
+    app.post('/api/user/acceptFriend', userController.acceptFriend)
+    app.post('/api/user/rejectFriend', userController.rejectFriend)
+
+    app.post('/api/user/postToGroup', userController.postToGroup)
+    app.post('/api/user/likePost', userController.likePost)
+
+    app.post('/api/user/sendDirectMessage', userController.sendDirectMessage)
+    app.post('/api/user/likeDirectMessage', userController.likeDirectMessage)
+
+    
+
 
     
     app.all("*", (req,res,next) => {
