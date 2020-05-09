@@ -1,7 +1,9 @@
 const mongoose = require('mongoose')
+
 const User = mongoose.model('User')
+const Group = mongoose.model('Group')
+
 const bcrypt = require('bcrypt')
-const session = require('express-session')
 const io = require('../socketio/socket')
 
 
@@ -166,7 +168,61 @@ module.exports = {
         }
     },
 
-    
+    joinGroup: async (req, res, next) => {
+        try {
+            // validate user and group
+            if (!req.session.userId) return next(new Error('you need to log in first'))
+            const currentUser = await User.findOne({_id: req.session.userId})
+            if (!currentUser) return next(new Error("User doesn't exist"))
+            const groupToJoin = await Group.findOne({_id: req.body.groupId})
+            if (!groupToJoin) return next(new Error('That group does not exist'))
+
+            // check to see if user in group on both sides
+            if (currentUser.groups.includes(groupToJoin._id)) return next(new Error("You're already in this group"))
+            if (groupToJoin.members.includes(currentUser._id)) return next(new Error("You're already in this group"))
+
+            // push user into group members, and push group into user's groups
+            groupToJoin.members.push(currentUser._id)
+            const groupJoined = await groupToJoin.save()
+            currentUser.groups.push(groupToJoin._id)
+            const userJoined = await currentUser.save()
+
+            res.json({message: "Successfully joined group"}, groupJoined, userJoined)
+        } catch (error) {
+            res.json(error)
+            next(error)
+        }
+    },
+
+
+    leaveGroup: async (req, res, next) => {
+        try {
+            // validate user and group
+            if (!req.session.userId) return next(new Error('you need to log in first'))
+            const currentUser = await User.findOne({_id: req.session.userId})
+            if (!currentUser) return next(new Error("User doesn't exist"))
+            const groupToLeave = await Group.findOne({_id: req.body.groupId})
+            if (!groupToJoin) return next(new Error('That group does not exist'))
+
+            // check to see if user NOT in group on both sides
+            if (!currentUser.groups.includes(groupToJoin._id)) return next(new Error("You're not in this group"))
+            if (!groupToJoin.members.includes(currentUser._id)) return next(new Error("You're not in this group"))
+
+            // remove user and group on both sides
+            const indexOfUserInGroup = groupToLeave.members.indexOf(currentUser._id)
+            const indexOfGroupInUser = currentUser.groups.indexOf(groupToLeave._id)
+            groupToLeave.members.splice(indexOfUserInGroup, 1)
+            currentUser.groups.splice(indexOfGroupInUser, 1)
+
+            res.json({message: "Successfully joined group"}, groupJoined, userJoined)
+        } catch (error) {
+            res.json(error)
+            next(error)
+        }
+    },
+
+
+
 
 
 }

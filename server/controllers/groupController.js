@@ -12,10 +12,17 @@ module.exports = {
             .then(data => res.json(data))
             .catch(error =>res.json(error))
     },
-    create: (req, res) => {
-        Group.create(req.body)
-            .then(data => res.json(data))
-            .catch(error =>res.json(error))
+    create: async (req, res, next) => {
+        try {
+            if (!req.session.userId) return next(new Error('you need to log in first'))
+            const currentUser = await User.findOne({_id: req.body.userId})
+            if (!currentUser) return next(new Error('User doesnt exist'))
+            const newGroup = await Group.create(req.body)
+            res.json({message: 'new group created'}, newGroup)
+        } catch (error) {
+            res.json(error)
+            next(error)
+        }
     },
     updateOne: (req, res) => {
         Group.updateOne({_id: req.body._id},req.body,{new:true, runValidators:true})
@@ -27,5 +34,6 @@ module.exports = {
             .then(data => res.json(data))
             .catch(error =>res.json(error))
     },
+
 
 }

@@ -47,7 +47,6 @@ const UserSchema = mongoose.Schema({
     groups: [{
         type: Schema.Types.ObjectId,
         ref: "Group",
-        unReadMessages: Number
     }],
 
     friendRequests: [{
