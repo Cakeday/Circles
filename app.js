@@ -47,6 +47,5 @@ app.use(session({
 const mongooseConfig = require('./server/config/mongoose.js');
 require('./server/config/routes.js')(app);
 
-const ws = require('./server/websocket/socket').init(server)
-const socketEventHandler = require('./server/websocket/eventHandler')
-ws.on('connection', socketEventHandler.socketEvents)
+const io = require('./server/socketio/socket').init(server)
+io.on('connection', (socket) => console.log('Socket connection established'))

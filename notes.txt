@@ -9,6 +9,7 @@ for node
     bcrypt
     nodemailer ??
     path
+    socket-io
 
 for react
     axios

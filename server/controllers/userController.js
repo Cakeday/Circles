@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const User = mongoose.model('User')
 const bcrypt = require('bcrypt')
 const session = require('express-session')
-const socket = require('../websocket/socket')
+const io = require('../socketio/socket')
 
 
 module.exports = {
@@ -68,45 +68,104 @@ module.exports = {
             req.session.destroy();
             res.json({message: 'success'})
         }
-        res.json({message: 'user wasn\'t in session'})
+        res.json({message: "user wasn't in session"})
     },
 
     requestFriend: async (req, res, next) => {
-
-        // check if user in session && if both users exist
-        if (!req.session.userId) return next(new Error('you need to log in first'))
-        const currentUser = await User.findOne({_id: req.body.userId})
-        const userToRequest = await User.findOne({_id: req.body.friendId})
-        if (!currentUser || !userToRequest) return next(new Error('User doesnt exist'))
-
-
-        // check for pending requests on both sides && if already friends
-        if (currentUser.friendRequests.find(user => user._id == userToRequest._id)) {
-            return next(new Error('You already have a pending request from this user.'))
+        try {
+            // check if user in session && if both users exist
+            if (!req.session.userId) return next(new Error('you need to log in first'))
+            const currentUser = await User.findOne({_id: req.body.userId})
+            const userToRequest = await User.findOne({_id: req.body.friendId})
+            if (!currentUser || !userToRequest) return next(new Error('User doesnt exist'))
+    
+    
+            // check for pending requests on both sides && if already friends
+            if (currentUser.friendRequests.includes(userToRequest._id)) {
+                return next(new Error('You already have a pending request from this user.'))
+            }
+            if (userToRequest.friendRequests.includes(currentUser._id)) {
+                return next(new Error('You already sent a request to this person.'))
+            }
+            if (currentUser.friends.includes(userToRequest._id)) {
+                return next(new Error("You're already friends with this person"))
+            }
+    
+            const notification = {
+                kind: 'friendRequest',
+                category: currentUser._id
+            }
+    
+            userToRequest.friendRequests.push(currentUser._id)
+            userToRequest.notifications.push(notification)
+            await userToRequest.save()
+    
+            // need to figure this out...
+            // io.getIO().emit('friendRequest')
+    
+            res.json({message: 'Successfully sent request'})
+            
+        } catch (error) {
+            res.json(error)
+            next(error)
         }
-        if (userToRequest.friendRequests.find(user => user._id == userToRequest)) {
-            return next(new Error('You already sent a request to this person.'))
+
+
+    },
+
+    acceptFriend: async (req, res, next) => {
+        try {
+            // check if user in session && if both users exist
+            if (!req.session.userId) return next(new Error('you need to log in first'))
+            const currentUser = await User.findOne({_id: req.body.userId})
+            const userToAccept = await User.findOne({_id: req.body.friendId})
+            if (!currentUser || !userToAccept) return next(new Error("User doesn't exist"))
+
+            // look for the frend request, add the friend, remove friend request and notification
+            if (currentUser.friendRequests.includes(userToAccept._id)) {
+                currentUser.friends.push(userToAccept._id)
+                const indexOfReq = currentUser.friendRequests.indexOf(userToAccept._id)
+                const indexOfNotification = currentUser.notifications.map(el => el.category).indexOf(userToAccept._id)
+                currentUser.friendRequests.splice(indexOfReq, 1)
+                currentUser.notifications.splice(indexOfNotification, 1)
+                await currentUser.save()
+                res.json({message: 'successfully added friend', currentUser})
+            } else {
+                return next(new Error("the friend request doesn't exist"))
+            }
+
+        } catch (error) {
+            res.json(error)
+            next(error)
         }
-        if (currentUser.friends.find(user => user._id == userToRequest._id)) {
-            return next(new Error('You\'re already friends with this person'))
+    },
+
+    rejectFriend: async (req, res, next) => {
+        try {
+            // check if user in session && if both users exist
+            if (!req.session.userId) return next(new Error('you need to log in first'))
+            const currentUser = await User.findOne({_id: req.body.userId})
+            const userToAccept = await User.findOne({_id: req.body.friendId})
+            if (!currentUser || !userToAccept) return next(new Error("User doesn't exist"))
+
+            // look for the frend request, remove it, and notification
+            if (currentUser.friendRequests.includes(userToAccept._id)) {
+                currentUser.friends.push(userToAccept._id)
+                const indexOfReq = currentUser.friendRequests.indexOf(userToAccept._id)
+                const indexOfNotification = currentUser.notifications.map(el => el.category).indexOf(userToAccept._id)
+                currentUser.friendRequests.splice(indexOfReq, 1)
+                currentUser.notifications.splice(indexOfNotification, 1)
+                await currentUser.save()
+                res.json({message: 'successfully added friend', currentUser})
+            } else {
+                return next(new Error("the friend request doesn't exist"))
+            }
+
+        } catch (error) {
+            res.json(error)
+            next(error)
         }
-
-        const notification = {
-            kind: 'friendRequest',
-            category: currentUser._id
-        }
-
-        userToRequest.friendRequests.push(currentUser._id)
-        userToRequest.notifications.push(notification)
-        await userToRequest.save()
-
-        // need to figure this out...
-        // socket.getWS().send()
-
-        
-
     }
-
 
 
 }
