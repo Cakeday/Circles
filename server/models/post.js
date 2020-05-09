@@ -12,7 +12,13 @@ const PostSchema = mongoose.Schema({
         ref: 'User'
     },
 
-    likes: [{
+    likes: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+
+    likers: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
     }],

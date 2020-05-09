@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 
 const User = mongoose.model('User')
 const Group = mongoose.model('Group')
+const Channel = mongoose.model('Channel')
 
 const bcrypt = require('bcrypt')
 const io = require('../socketio/socket')
@@ -222,6 +223,15 @@ module.exports = {
             next(error)
         }
     },
+
+    postToChannel: async (req, res, next) => {
+        if (!req.session.userId) return next(new Error('you need to log in first'))
+        const channel = await Channel.findOne({_id: req.body.groupId})
+        const post = {
+            text: req.body.text,
+            
+        }
+    }
 
 
 

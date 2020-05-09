@@ -15,7 +15,7 @@ module.exports = {
     create: async (req, res, next) => {
         try {
             if (!req.session.userId) return next(new Error('you need to log in first'))
-            const currentUser = await User.findOne({_id: req.body.userId})
+            const currentUser = await User.findOne({_id: req.session.userId})
             if (!currentUser) return next(new Error('User doesnt exist'))
             const newGroup = await Group.create(req.body)
             res.json({message: 'new group created'}, newGroup)

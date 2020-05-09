@@ -1,5 +1,6 @@
 const userController = require('../controllers/userController')
 const groupController = require('../controllers/groupController')
+const channelController = require('../controllers/channelController')
 
 
 
@@ -18,6 +19,7 @@ module.exports = (app) => {
     app.post('/api/user/acceptFriend', userController.acceptFriend)
     app.post('/api/user/rejectFriend', userController.rejectFriend)
     
+    app.post('/api/user/createGroup', groupController.create)
     app.post('/api/user/joinGroup', userController.joinGroup)
     app.post('/api/user/leaveGroup', userController.leaveGroup)
     
