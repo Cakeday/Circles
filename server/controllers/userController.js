@@ -148,15 +148,14 @@ module.exports = {
             const userToAccept = await User.findOne({_id: req.body.friendId})
             if (!currentUser || !userToAccept) return next(new Error("User doesn't exist"))
 
-            // look for the frend request, remove it, and notification
+            // look for the frend request, remove it and notification
             if (currentUser.friendRequests.includes(userToAccept._id)) {
-                currentUser.friends.push(userToAccept._id)
                 const indexOfReq = currentUser.friendRequests.indexOf(userToAccept._id)
                 const indexOfNotification = currentUser.notifications.map(el => el.category).indexOf(userToAccept._id)
                 currentUser.friendRequests.splice(indexOfReq, 1)
                 currentUser.notifications.splice(indexOfNotification, 1)
                 await currentUser.save()
-                res.json({message: 'successfully added friend', currentUser})
+                res.json({message: 'successfully removed friendrequest', currentUser})
             } else {
                 return next(new Error("the friend request doesn't exist"))
             }
@@ -165,7 +164,9 @@ module.exports = {
             res.json(error)
             next(error)
         }
-    }
+    },
+
+    
 
 
 }
