@@ -11,6 +11,13 @@ const ChannelSchema = mongoose.Schema({
         type: String,
     },
 
+    privacy: {
+        type: String,
+        required: true,
+        enum: ['private', 'open'],
+        default: 'open'
+    },
+
     posts: [{
         type: Schema.Types.ObjectId,
         ref: 'Post'

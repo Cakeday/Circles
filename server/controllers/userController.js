@@ -213,13 +213,17 @@ module.exports = {
             const indexOfGroupInUser = currentUser.groups.indexOf(groupToLeave._id)
             groupToLeave.members.splice(indexOfUserInGroup, 1)
             currentUser.groups.splice(indexOfGroupInUser, 1)
+            const groupLeft = await groupToLeave.save()
+            const userLeft = await currentUser.save()
 
-            res.json({message: "Successfully joined group"}, groupJoined, userJoined)
+            res.json({message: "Successfully joined group"}, groupLeft, userLeft)
         } catch (error) {
             res.json(error)
             next(error)
         }
     },
+
+
 
 
 

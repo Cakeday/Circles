@@ -18,11 +18,11 @@ module.exports = (app) => {
     app.post('/api/user/acceptFriend', userController.acceptFriend)
     app.post('/api/user/rejectFriend', userController.rejectFriend)
     
-    // app.post('/api/user/createGroup', groupController.create)
-    // app.post('/api/user/joinGroup', userController.joinGroup)
-    // app.post('/api/user/leaveGroup', userController.leaveGroup)
-
-
+    app.post('/api/user/joinGroup', userController.joinGroup)
+    app.post('/api/user/leaveGroup', userController.leaveGroup)
+    
+    
+    app.post('/api/user/createChannel', channelController.create)
     // app.post('/api/user/postToGroup', userController.postToGroup)
     // app.post('/api/user/likePost', userController.likePost)
 
