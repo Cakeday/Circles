@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const User = mongoose.model('User')
 const Group = mongoose.model('Group')
 const Channel = mongoose.model('Channel')
+const Post = mongoose.model('Post')
 
 const bcrypt = require('bcrypt')
 const io = require('../socketio/socket')
@@ -225,12 +226,25 @@ module.exports = {
     },
 
     postToChannel: async (req, res, next) => {
-        if (!req.session.userId) return next(new Error('you need to log in first'))
-        const channel = await Channel.findOne({_id: req.body.groupId})
-        const post = {
-            text: req.body.text,
-            
+        try {
+            if (!req.session.userId) return next(new Error('you need to log in first'))
+            const channel = await Channel.findOne({_id: req.body.channelId})
+            if (!channel) return next(new Error("that channel doesn't exist"))
+            const post = {
+                text: req.body.text,
+                poster: req.body.userId,
+                likes: 0,
+                likers: [],
+                channel: req.body.channelId
+            }
+            const newPost = await Post.create(post)
+            res.json({message: "Successfully created post"}, newPost)
+        } catch (error) {
+            res.json(error)
+            next(error)
         }
+
+
     }
 
 
