@@ -35,3 +35,5 @@ as it currently stands, I have the users create path set up
 need to set up nodemailer.. maybe 2FA?
 
 need to look into storing photos in s3 bucket
+
+i need to deal with rendering the list via mapStateToProps in the component
