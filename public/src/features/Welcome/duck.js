@@ -6,8 +6,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 export const signUp = createAsyncThunk(
     'session/signUp',
-    async (arg, thunkAPI) => {
-        const response = await axios.get('/api/user/create')
+    async (newUser, thunkAPI) => {
+        const response = await axios.post('/api/user/create', newUser)
         console.log("This is in the thunk hook")
         return response.data
     }
@@ -15,25 +15,15 @@ export const signUp = createAsyncThunk(
 
 export const login = createAsyncThunk(
     'session/login',
-    async (arg, thunkAPI) => {
-        const response = await axios.get('/api/user/login')
+    async (user, thunkAPI) => {
+        const response = await axios.post('/api/user/login', user)
         return response.data
     }
 )
 
-
-
-
-
-
-
-
-
-
 const initialState = {
     loading: 'idle',
     error: null,
-    
     id: null,
     email: null,
     isLoggedIn: false

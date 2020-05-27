@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { signUp, login } from './duck'
 
 const Welcome = (props) => {
+
+    const dispatch = useDispatch()
 
     const [newUser, setNewUser] = useState(true)
 
@@ -10,21 +14,47 @@ const Welcome = (props) => {
     const [password, setPassword] = useState('')
     const [passwordConf, setPasswordConf] = useState('')
 
+    
+
+    const handleSignUpSubmit = (e) => {
+        e.preventDefault()
+        const newUser = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: password,
+            passwordConf: passwordConf
+        }
+        console.log(newUser)
+        dispatch(signUp(newUser))
+    }
+
+    const handleLoginSubmit = (e) => {
+        e.preventDefault()
+        const user = {
+            email: email,
+            password: password,
+        }
+        dispatch(() => login(user))
+    }
+
 
     const SignUpForm = (
-        <form>
-            <input value={firstName} name="firstName" placeholder="First Name" onChange={e => setFirstName(e.target.value)}></input>
-            <input value={lastName} name="lastName" placeholder="Last Name" onChange={e => setLastName(e.target.value)}></input>
-            <input value={email} name="email" placeholder="Email" onChange={e => setEmail(e.target.value)}></input>
-            <input type="password" value={password} name="password" placeholder="Password" onChange={e => setPassword(e.target.value)}></input>
-            <input type="password" value={passwordConf} name="passwordConf" placeholder="Confirm Password" onChange={e => setPasswordConf(e.target.value)}></input>
+        <form onSubmit={handleSignUpSubmit}>
+            <input value={firstName} placeholder="First Name" onChange={e => setFirstName(e.target.value)} />
+            <input value={lastName} placeholder="Last Name" onChange={e => setLastName(e.target.value)} />
+            <input value={email} placeholder="Email" onChange={e => setEmail(e.target.value)} />
+            <input value={password} placeholder="Password" type="password" onChange={e => setPassword(e.target.value)} />
+            <input value={passwordConf} placeholder="Confirm Password" type="password" onChange={e => setPasswordConf(e.target.value)} />
+            <input type="submit" value="Submit!" />
         </form>
     )
-
+    
     const LoginForm = (
-        <form>
-            <input value={email} name="email" placeholder="Email" onChange={e => setEmail(e.target.value)}></input>
-            <input type="password" value={password} name="password" placeholder="Password" onChange={e => setPassword(e.target.value)}></input>
+        <form onSubmit={handleLoginSubmit}>
+            <input value={email} placeholder="Email" onChange={e => setEmail(e.target.value)} />
+            <input value={password} placeholder="Password" type="password" onChange={e => setPassword(e.target.value)} />
+            <input type="submit" value="Submit!" />
         </form>
     )
 
