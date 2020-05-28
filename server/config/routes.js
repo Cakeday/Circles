@@ -19,10 +19,12 @@ module.exports = (app) => {
     app.post('/api/user/acceptFriend', userController.acceptFriend)
     app.post('/api/user/rejectFriend', userController.rejectFriend)
     
-    app.post('/api/user/createGroup', groupController.create)
+    app.get('/api/group/findAll', groupController.find)
+    app.post('/api/group/createGroup', groupController.create)
+    app.get('/api/group/deleteOne/:id', groupController.deleteOne)
+    
     app.post('/api/user/joinGroup', userController.joinGroup)
     app.post('/api/user/leaveGroup', userController.leaveGroup)
-    
     
     app.post('/api/user/createChannel', channelController.create)
     // app.post('/api/user/postToGroup', userController.postToGroup)

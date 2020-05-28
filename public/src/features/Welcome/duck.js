@@ -17,6 +17,7 @@ export const login = createAsyncThunk(
     'session/login',
     async (user, thunkAPI) => {
         const response = await axios.post('/api/user/login', user)
+        console.log(response)
         return response.data
     }
 )
@@ -30,7 +31,7 @@ const initialState = {
 }
 
 const signUpSlice = createSlice({
-    name: 'userCrud',
+    name: 'session',
     initialState: initialState,
     reducers: {},
     extraReducers: {

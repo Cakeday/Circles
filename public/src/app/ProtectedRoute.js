@@ -1,11 +1,11 @@
 import React from 'react'
 
-import { connect, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Redirect, Route, withRouter } from "react-router-dom";
 
 
 const Protected = ({ path, component: Component }) => {
-    const loggedIn = useSelector(state => state.session.loggedIn)
+    const loggedIn = useSelector(state => state.signUp.isLoggedIn)
     return (
         <Route
             path={path}

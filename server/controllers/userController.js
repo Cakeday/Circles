@@ -26,13 +26,17 @@ module.exports = {
             let userExist = await User.findOne({email: req.body.email})
             if (userExist) return next(new Error('User with that email already exists'))
             const hash = await bcrypt.hash(req.body.password, 10);
+            const globalGroup = await Group.findOne({_id: '5ecf0b323eb4d4d62f0e7bed'})
             const userToCreate = new User({
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
                 email: req.body.email,
                 hashedPassword: hash,
+                groups: [globalGroup._id]
             })
             const newUser = await User.create(userToCreate);
+            globalGroup.members.push(newUser._id)
+            globalGroup.save()
             req.session.isLoggedIn = true;
             req.session.email = req.body.email;
             res.json(newUser)
@@ -61,18 +65,26 @@ module.exports = {
             let match = await bcrypt.compare(req.body.password, userInfo.hashedPassword)
             if (!match) return next(new Error('incorrect password'))
             req.session.userId = userInfo._id
+            if (!userInfo.groups.includes('5ecf0b323eb4d4d62f0e7bed')) {
+                const globalGroup = await Group.findOne({_id: '5ecf0b323eb4d4d62f0e7bed'})
+                globalGroup.members.push(userInfo._id)
+                await globalGroup.save()
+                userInfo.groups.push(globalGroup._id)
+                await userInfo.save()
+            }
             res.json(userInfo)
         } catch (error) {
             res.json(error)
             next(error)
         }
     },
-    logout: async (req, res) => {
+    logout: (req, res) => {
         if (req.session.id) { 
             req.session.destroy();
             res.json({message: 'success'})
+        } else {
+            res.json({message: "user wasn't in session"})
         }
-        res.json({message: "user wasn't in session"})
     },
 
     requestFriend: async (req, res, next) => {

@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { signUp, login } from './duck'
+import { Redirect } from 'react-router-dom'
 
 const Welcome = (props) => {
 
     const dispatch = useDispatch()
+    const isLoggedIn = useSelector(state => state.signUp.isLoggedIn)
 
     const [newUser, setNewUser] = useState(true)
 
@@ -14,7 +16,7 @@ const Welcome = (props) => {
     const [password, setPassword] = useState('')
     const [passwordConf, setPasswordConf] = useState('')
 
-    
+    if (isLoggedIn) return (<Redirect to='/main' />)
 
     const handleSignUpSubmit = (e) => {
         e.preventDefault()
@@ -35,7 +37,7 @@ const Welcome = (props) => {
             email: email,
             password: password,
         }
-        dispatch(() => login(user))
+        dispatch(login(user))
     }
 
 
