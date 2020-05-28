@@ -25,6 +25,7 @@ module.exports = (app) => {
     
     app.post('/api/user/joinGroup', userController.joinGroup)
     app.post('/api/user/leaveGroup', userController.leaveGroup)
+    app.get('/api/user/findAllGroupsWithUser', userController.findAllGroupsWithUser)
     
     app.post('/api/user/createChannel', channelController.create)
     // app.post('/api/user/postToGroup', userController.postToGroup)

@@ -51,7 +51,7 @@ module.exports = {
             .then(data => res.json(data))
             .catch(error =>res.json(error))
     },
-    deleteOne: (req, res) => {
+    deleteOne: (req, res, next) => {
         if (!req.session.userId) return next(new Error('you need to log in first'))
         User.deleteOne({_id: req.params.id})
             .then(data => res.json(data))
@@ -255,10 +255,18 @@ module.exports = {
             res.json(error)
             next(error)
         }
-
-
+    },
+    
+    findAllGroupsWithUser: async (req, res, next) => {
+        try {
+            if (!req.session.userId) return next(new Error('you need to log in first'))
+            const userGroups = await User.findOne({_id: req.session.userId}).populate({path: 'groups', populate: {path: 'channels'}})
+            res.json(userGroups)
+        } catch (error) {
+            res.json(error)
+            next(error)
+        }
     }
-
 
 
 
