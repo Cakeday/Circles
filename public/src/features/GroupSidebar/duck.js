@@ -1,26 +1,34 @@
 import axios from 'axios'
-import { createSlice, createAsyncThunk} from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 export const getUserGroups = createAsyncThunk(
     'user/getUserGroups',
     async (arg, thunkAPI) => {
-        const userGroups = await axios.get('/api/user/findAllGroupsWithUser')
-        return userGroups
+        const response = await axios.get('/api/user/findAllGroupsWithUser')
+        return response.data
     }
 )
 
 
 const initialState = {
     groupsWithChannels: [],
+    channelsOfGroup: [],
     loading: 'idle',
     error: null
+
 }
 
 
 const GroupSidebarSlice = createSlice({
     name: 'GroupSidebarSlice',
     initialState: initialState,
-    reducers: {},
+    reducers: {
+        getChannelsOfGroup: (state, action) => {
+            if (action.payload.channels) {
+                state.channelsOfGroup = action.payload.channels
+            }
+        }
+    },
     extraReducers: {
         [getUserGroups.pending]: (state, action) => {
             state.loading = 'pending'
@@ -35,3 +43,7 @@ const GroupSidebarSlice = createSlice({
         }
     }
 })
+
+export const { getChannelsOfGroup } = GroupSidebarSlice.actions
+
+export default GroupSidebarSlice.reducer

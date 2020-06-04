@@ -8,6 +8,8 @@ const Post = mongoose.model('Post')
 const bcrypt = require('bcrypt')
 const io = require('../socketio/socket')
 
+const sessionizeUser = require('../session/util').sessionizeUser
+
 
 module.exports = {
     find: (req, res) => {
@@ -37,8 +39,7 @@ module.exports = {
             const newUser = await User.create(userToCreate);
             globalGroup.members.push(newUser._id)
             globalGroup.save()
-            req.session.isLoggedIn = true;
-            req.session.email = req.body.email;
+            req.session.user = sessionizeUser(newUser)
             res.json(newUser)
         } catch (error) {
             res.json(error)
@@ -46,13 +47,13 @@ module.exports = {
         }
     },
     updateOne: (req, res) => {
-        if (!req.session.userId) return next(new Error('you need to log in first'))
+        if (!req.session.user) return next(new Error('you need to log in first'))
         User.updateOne({_id: req.body._id},req.body,{new:true, runValidators:true})
             .then(data => res.json(data))
             .catch(error =>res.json(error))
     },
     deleteOne: (req, res, next) => {
-        if (!req.session.userId) return next(new Error('you need to log in first'))
+        if (!req.session.user) return next(new Error('you need to log in first'))
         User.deleteOne({_id: req.params.id})
             .then(data => res.json(data))
             .catch(error =>res.json(error))
@@ -64,7 +65,7 @@ module.exports = {
             if (!userInfo) return next(new Error('That email doesn\'t exist in the database'))
             let match = await bcrypt.compare(req.body.password, userInfo.hashedPassword)
             if (!match) return next(new Error('incorrect password'))
-            req.session.userId = userInfo._id
+            req.session.user = sessionizeUser(userInfo)
             if (!userInfo.groups.includes('5ecf0b323eb4d4d62f0e7bed')) {
                 const globalGroup = await Group.findOne({_id: '5ecf0b323eb4d4d62f0e7bed'})
                 globalGroup.members.push(userInfo._id)
@@ -79,18 +80,21 @@ module.exports = {
         }
     },
     logout: (req, res) => {
-        if (req.session.id) { 
+        if (req.session.user) { 
             req.session.destroy();
             res.json({message: 'success'})
         } else {
             res.json({message: "user wasn't in session"})
         }
     },
+    checkSession: (req, res) => {
+        res.json(req.session.user)
+    },
 
     requestFriend: async (req, res, next) => {
         try {
             // check if user in session && if both users exist
-            if (!req.session.userId) return next(new Error('you need to log in first'))
+            if (!req.session.user) return next(new Error('you need to log in first'))
             const currentUser = await User.findOne({_id: req.body.userId})
             const userToRequest = await User.findOne({_id: req.body.friendId})
             if (!currentUser || !userToRequest) return next(new Error('User doesnt exist'))
@@ -132,7 +136,7 @@ module.exports = {
     acceptFriend: async (req, res, next) => {
         try {
             // check if user in session && if both users exist
-            if (!req.session.userId) return next(new Error('you need to log in first'))
+            if (!req.session.user) return next(new Error('you need to log in first'))
             const currentUser = await User.findOne({_id: req.body.userId})
             const userToAccept = await User.findOne({_id: req.body.friendId})
             if (!currentUser || !userToAccept) return next(new Error("User doesn't exist"))
@@ -159,7 +163,7 @@ module.exports = {
     rejectFriend: async (req, res, next) => {
         try {
             // check if user in session && if both users exist
-            if (!req.session.userId) return next(new Error('you need to log in first'))
+            if (!req.session.user) return next(new Error('you need to log in first'))
             const currentUser = await User.findOne({_id: req.body.userId})
             const userToAccept = await User.findOne({_id: req.body.friendId})
             if (!currentUser || !userToAccept) return next(new Error("User doesn't exist"))
@@ -185,8 +189,8 @@ module.exports = {
     joinGroup: async (req, res, next) => {
         try {
             // validate user and group
-            if (!req.session.userId) return next(new Error('you need to log in first'))
-            const currentUser = await User.findOne({_id: req.session.userId})
+            if (!req.session.user) return next(new Error('you need to log in first'))
+            const currentUser = await User.findOne({_id: req.body.userId})
             if (!currentUser) return next(new Error("User doesn't exist"))
             const groupToJoin = await Group.findOne({_id: req.body.groupId})
             if (!groupToJoin) return next(new Error('That group does not exist'))
@@ -212,8 +216,8 @@ module.exports = {
     leaveGroup: async (req, res, next) => {
         try {
             // validate user and group
-            if (!req.session.userId) return next(new Error('you need to log in first'))
-            const currentUser = await User.findOne({_id: req.session.userId})
+            if (!req.session.user) return next(new Error('you need to log in first'))
+            const currentUser = await User.findOne({_id: req.body.userId})
             if (!currentUser) return next(new Error("User doesn't exist"))
             const groupToLeave = await Group.findOne({_id: req.body.groupId})
             if (!groupToJoin) return next(new Error('That group does not exist'))
@@ -239,7 +243,7 @@ module.exports = {
 
     postToChannel: async (req, res, next) => {
         try {
-            if (!req.session.userId) return next(new Error('you need to log in first'))
+            if (!req.session.user) return next(new Error('you need to log in first'))
             const channel = await Channel.findOne({_id: req.body.channelId})
             if (!channel) return next(new Error("that channel doesn't exist"))
             const post = {
@@ -259,8 +263,9 @@ module.exports = {
     
     findAllGroupsWithUser: async (req, res, next) => {
         try {
-            if (!req.session.userId) return next(new Error('you need to log in first'))
-            const userGroups = await User.findOne({_id: req.session.userId}).populate({path: 'groups', populate: {path: 'channels'}})
+            console.log(req.session)
+            if (!req.session.user) return next(new Error('you need to log in first'))
+            const userGroups = await User.findOne({_id: req.session.user.userId}).populate({path: 'groups', populate: {path: 'channels'}})
             res.json(userGroups)
         } catch (error) {
             res.json(error)

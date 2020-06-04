@@ -14,6 +14,7 @@ module.exports = (app) => {
 
     app.post('/api/user/login', userController.login)
     app.get('/api/user/logout', userController.logout)
+    app.get('/api/user/checkSession', userController.checkSession)
 
     app.post('/api/user/requestFriend', userController.requestFriend)
     app.post('/api/user/acceptFriend', userController.acceptFriend)
@@ -38,7 +39,8 @@ module.exports = (app) => {
 
 
     
-    app.all("*", (req,res,next) => {
-        res.sendFile(path.resolve("./public/public/index.html"))
+    app.all("*", (req, res, next) => {
+        res.sendFile(path.resolve("../../public/public/index.html"))
     });
 }
+

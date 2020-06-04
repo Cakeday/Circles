@@ -5,16 +5,15 @@ import { Redirect } from 'react-router-dom'
 
 const Welcome = (props) => {
 
-    const dispatch = useDispatch()
-    const isLoggedIn = useSelector(state => state.signUp.isLoggedIn)
-
     const [newUser, setNewUser] = useState(true)
-
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [passwordConf, setPasswordConf] = useState('')
+
+    const dispatch = useDispatch()
+    const isLoggedIn = useSelector(state => state.signUp.isLoggedIn)
 
     if (isLoggedIn) return (<Redirect to='/main' />)
 

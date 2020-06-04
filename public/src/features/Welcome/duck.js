@@ -2,13 +2,10 @@ import axios from 'axios'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 
-
-
 export const signUp = createAsyncThunk(
     'session/signUp',
     async (newUser, thunkAPI) => {
         const response = await axios.post('/api/user/create', newUser)
-        console.log("This is in the thunk hook")
         return response.data
     }
 )
@@ -17,10 +14,18 @@ export const login = createAsyncThunk(
     'session/login',
     async (user, thunkAPI) => {
         const response = await axios.post('/api/user/login', user)
-        console.log(response)
         return response.data
     }
 )
+
+export const checkIfLoggedIn = createAsyncThunk(
+    'session/checkIfLoggedIn',
+    async (user, thunkAPI) => {
+        const response = await axios.get('/api/user/checkSession')
+        return response.data
+    }
+)
+
 
 const initialState = {
     loading: 'idle',
@@ -33,7 +38,8 @@ const initialState = {
 const signUpSlice = createSlice({
     name: 'session',
     initialState: initialState,
-    reducers: {},
+    reducers: {
+    },
     extraReducers: {
         [signUp.pending]: (state, action) => {
             state.loading = 'pending'
@@ -61,13 +67,29 @@ const signUpSlice = createSlice({
         [login.rejected]: (state, action) => {
             state.error = action.error
             state.loading = 'idle'
+        }, 
+
+        [checkIfLoggedIn.pending]: (state, action) => {
+            state.loading = 'pending'
         },
+        [checkIfLoggedIn.fulfilled]: (state, action) => {
+            if (action.payload.user) {
+                state.isLoggedIn = true
+                state.id = action.payload.user._id
+                state.email = action.payload.user.email
+                state.loading = 'idle'
+            }
+        },
+        [checkIfLoggedIn.rejected]: (state, action) => {
+            state.error = action.error
+            state.loading = 'idle'
+        }, 
 
     }
     
 })
 
-// export const {  } = signUpSlice.actions
+// export const { } = signUpSlice.actions
 
 export default signUpSlice.reducer
 

@@ -5,8 +5,7 @@ const Main = (props) => {
 
     return (
         <>
-            <h1>Welcome to Main</h1>
-            <GroupSidebar />
+            <GroupSidebar className="" />
         </>
     )
 }

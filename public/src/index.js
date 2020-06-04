@@ -5,18 +5,26 @@ import App from './app/App';
 import * as serviceWorker from './serviceWorker';
 
 import { Provider } from 'react-redux'
-import store from './app/store'
+import setUpStore from './app/store'
 
-ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+import { checkLoggedIn } from "./util/session";
 
-window.getState = store.getState
+const render = (preloadedState) => {
+  const store = setUpStore(preloadedState)
+  ReactDOM.render(
+    // <React.StrictMode>
+      <Provider store={store}>
+        <App />
+      </Provider>,
+    // </React.StrictMode>,
+    document.getElementById('root'),
+  window.getState = store.getState
+  );
+}
+
+
+
+(async () => render(await checkLoggedIn()))()
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

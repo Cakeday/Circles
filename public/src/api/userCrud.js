@@ -8,7 +8,6 @@ export const findAllUsers = createAsyncThunk(
     'users/fetchAllUsers',
     async (arg, thunkAPI) => {
         const response = await axios.get('/api/user/findAll')
-        console.log("This is in the thunk hook")
         return response.data
     }
 )
