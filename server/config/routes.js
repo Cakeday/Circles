@@ -29,7 +29,7 @@ module.exports = (app) => {
     app.get('/api/user/findAllGroupsWithUser', userController.findAllGroupsWithUser)
     
     app.post('/api/user/createChannel', channelController.create)
-    // app.post('/api/user/postToGroup', userController.postToGroup)
+    app.post('/api/user/postToChannel', userController.postToChannel)
     // app.post('/api/user/likePost', userController.likePost)
 
     // app.post('/api/user/sendDirectMessage', userController.sendDirectMessage)

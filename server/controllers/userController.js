@@ -254,7 +254,7 @@ module.exports = {
                 channel: req.body.channelId
             }
             const newPost = await Post.create(post)
-            res.json({message: "Successfully created post"}, newPost)
+            res.json(newPost)
         } catch (error) {
             res.json(error)
             next(error)

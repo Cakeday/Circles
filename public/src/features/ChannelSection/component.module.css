@@ -1,0 +1,15 @@
+.container {
+    list-style: none; 
+    padding-left: 0;
+    margin-top: 0;
+    margin: 0px;
+    font-size: 90%;
+    width: 20vw;
+    border: 1px solid #bbb;
+}
+
+.button {
+    border-radius: 0px;
+    margin: 0;
+    width: 100%;
+}

@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { getUserGroups, getChannelsOfGroup } from "./duck";
+import { getUserGroups, setActiveGroup } from "./duck";
 
-import ChannelSection from "../ChannelSection/component";
+import styles from './component.module.css'
 
 const GroupSidebar = () => {
 
     const groupsOfUser = useSelector(state => state.groupSidebar.groupsWithChannels)
-    console.log(groupsOfUser)
     const dispatch = useDispatch()
     
     useEffect(() => {
@@ -17,14 +16,13 @@ const GroupSidebar = () => {
 
     return (
         <>
-            <ul>
+            <ul className={styles.container}>
                 {groupsOfUser.map(group => (
                     <li key={group._id}>
-                        <button onClick={() => dispatch(getChannelsOfGroup({channels: group.channels}))}>{group.name}</button>
+                        <button className={styles.button} onClick={() => dispatch(setActiveGroup({group: group}))}>{group.name}</button>
                     </li>
                 ))}
             </ul>
-            <ChannelSection />
         </>
     )
 }

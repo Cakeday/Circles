@@ -21,14 +21,6 @@ export const findUserById = createAsyncThunk(
 )
 
 
-
-
-
-
-
-
-
-
 const initialState = {
     loading: 'idle',
     error: null,
@@ -51,6 +43,8 @@ const userCrudSlice = createSlice({
             state.loading = 'idle'
             state.error = action.error
         },
+
+
     }
     
 })
